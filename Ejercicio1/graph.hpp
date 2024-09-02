@@ -10,7 +10,7 @@ the weight of the edge and a pointer to the next edge.
 */
 class edge{
 
-public:
+private:
 	int from;
 	int conectionData;
 	int weight;
@@ -30,6 +30,13 @@ public:
 		this->weight = weight;
 	};
 
+	int getFrom(){ return from; };
+	int getConectionData(){ return conectionData; };
+	int getWeight(){ return weight; };
+	void setWeight(int nWeight){ weight = nWeight; };
+	edge* getNextEdge(){ return nextEdge; };
+	void setNextEdge(edge* nEdge){ nextEdge = nEdge; };
+
 };
 typedef edge* pEdge;
 
@@ -40,12 +47,13 @@ the data of the node,
 a pointer to the first edge that comes out of the node,
 */
 class node{
-public:
+private:
 	int ID;
 	int nodeData;
 	edge* conection;
 	node* nextNode;
 
+public:
 	node(){
 		this->conection = nullptr;
 	};
@@ -57,6 +65,14 @@ public:
 	node(int ID, int data) : node(ID){
 		this->nodeData = data;
 	};
+
+	int getID(){ return ID; };
+	int getNodeData(){ return nodeData; };
+	void setNodeData(int nData){ nodeData = nData; };
+	edge* getConection(){ return conection; };
+	void setConection(edge* nConection){ conection = nConection; };
+	node* getNextNode(){ return nextNode; };
+	void setNextNode(node* nNode){ nextNode = nNode; };
 };
 typedef node *pNode;
 
@@ -100,17 +116,17 @@ public:
 		graphHead = head;
 		
 		while(graphHead!=nullptr){
-			edgeHead = graphHead->conection;
+			edgeHead = graphHead->getConection();
 			
 			while(edgeHead!=nullptr){
 				edgeAuxiliar = edgeHead;
-				edgeHead = edgeHead->nextEdge;
+				edgeHead = edgeHead->getNextEdge();
 
 				delete edgeAuxiliar;
 			}
 			
 			nodeAuxiliar = graphHead;
-			graphHead = graphHead->nextNode;
+			graphHead = graphHead->getNextNode();
 
 			delete nodeAuxiliar;
 		}
@@ -123,7 +139,7 @@ public:
 		pNode newNode;
 		newNode = new node(nodeID);
 		
-		newNode->nextNode = head;
+		newNode->setNextNode(head);
 		head = newNode;
 
 		nodeID++;
@@ -162,34 +178,34 @@ public:
 		}
 
 		//cheking for X
-		edgeHead = nodeX->conection;
+		edgeHead = nodeX->getConection();
 		while (edgeHead != nullptr) {
-			if (edgeHead->conectionData == IDy) {
+			if (edgeHead->getConectionData() == IDy) {
 				std::cout << "the Edge already exists" << std::endl;
 				return;
 			}
-			edgeHead = edgeHead->nextEdge;
+			edgeHead = edgeHead->getNextEdge();
 		};
 
 		//Inserting for X
 		edgeHead = new edge(IDx, IDy);
-		edgeHead->nextEdge = nodeX->conection;
-		nodeX->conection = edgeHead;
+		edgeHead->setNextEdge(nodeX->getConection());
+		nodeX->setConection(edgeHead);
 
 		//cheking for Y
-		edgeHead = nodeY->conection;
+		edgeHead = nodeY->getConection();
 		while (edgeHead != nullptr) {
-			if (edgeHead->conectionData == IDx) {
+			if (edgeHead->getConectionData() == IDx) {
 				std::cout << "the Edge already exists" << std::endl;
 				return;
 			}
-			edgeHead = edgeHead->nextEdge;
+			edgeHead = edgeHead->getNextEdge();
 		};
 
 		//Inserting for Y
 		edgeHead = new edge(IDy, IDx);
-		edgeHead->nextEdge = nodeY->conection;
-		nodeX->conection = edgeHead;
+		edgeHead->setNextEdge(nodeY->getConection());
+		nodeY->setConection(edgeHead);
 		
 	};
 
@@ -204,22 +220,22 @@ public:
 		pNode nodeX = SearchNodeByID(IDx);
 		pNode nodeY = SearchNodeByID(IDy);
 
-		edgeHead = nodeX->conection;
+		edgeHead = nodeX->getConection();
 		while(edgeHead != nullptr){
-			if(edgeHead->conectionData == IDy){
-				edgeHead->weight = npeso;
+			if(edgeHead->getConectionData() == IDy){
+				edgeHead->setWeight(npeso);
 				break;
 			}
-			edgeHead = edgeHead->nextEdge;
+			edgeHead = edgeHead->getNextEdge();
 		}
 
-		edgeHead = nodeY->conection;
+		edgeHead = nodeY->getConection();
 		while(edgeHead != nullptr){
-			if(edgeHead->conectionData == IDx){
-				edgeHead->weight = npeso;
+			if(edgeHead->getConectionData() == IDx){
+				edgeHead->setWeight(npeso);
 				break;
 			}
-			edgeHead = edgeHead->nextEdge;
+			edgeHead = edgeHead->getNextEdge();
 		}
 	};
 
@@ -231,9 +247,9 @@ public:
 		graphHead = head;
 
 		while(graphHead != nullptr){
-			if(graphHead->ID == IDnode)
+			if(graphHead->getID() == IDnode)
 				return graphHead;
-			graphHead = graphHead->nextNode;
+			graphHead = graphHead->getNextNode();
 		}
 
 		return nullptr;
@@ -253,16 +269,16 @@ public:
 		else{
 			
 			while(graphHead != nullptr){
-				std::cout<< graphHead-> ID<< " conections: "<<std::endl;
-				edgeHead = graphHead->conection;
+				std::cout<< graphHead->getID()<< " conections: "<<std::endl;
+				edgeHead = graphHead->getConection();
 				
 				while(edgeHead != nullptr){
-					std::cout<< edgeHead->conectionData<< ", ";
-					edgeHead = edgeHead->nextEdge;
+					std::cout<< edgeHead->getConectionData()<< ", ";
+					edgeHead = edgeHead->getNextEdge();
 				}
 				
 				std::cout<<std::endl;
-				graphHead = graphHead->nextNode;
+				graphHead = graphHead->getNextNode();
 			}
 		}			
 	};
@@ -297,20 +313,20 @@ public:
 		while(currentNode != endNode){
 
 			//agregar los edges de los nodos no visitados 
-			pEdge nearEdges= this->SearchNodeByID(currentNode)->conection;
+			pEdge nearEdges= this->SearchNodeByID(currentNode)->getConection();
 			while(nearEdges != nullptr){
-				if(!visited[nearEdges->conectionData]){
+				if(!visited[nearEdges->getConectionData()]){
 
 					//pone las distancias tentativas
-					if(nearPath[nearEdges->conectionData] > nearPath[currentNode] + nearEdges->weight){
+					if(nearPath[nearEdges->getConectionData()] > nearPath[currentNode] + nearEdges->getWeight()){
 
-						nearPath[nearEdges->conectionData] = nearPath[currentNode] + nearEdges->weight;
+						nearPath[nearEdges->getConectionData()] = nearPath[currentNode] + nearEdges->getWeight();
 					}
 					franja.push_back(nearEdges);
 				}
 
 
-				nearEdges = nearEdges->nextEdge;
+				nearEdges = nearEdges->getNextEdge();
 			}
 
 			
@@ -328,7 +344,7 @@ public:
 				}
 			}
 			for(pEdge edge : franja){
-				if( nearPath[edge->from]+ edge->weight == nearPath[edge->conectionData] && nextNode == edge->conectionData){
+				if( nearPath[edge->getFrom()]+ edge->getWeight() == nearPath[edge->getConectionData()] && nextNode == edge->getConectionData()){
 					selectedEdge = edge;
 					break;
 					
@@ -340,7 +356,7 @@ public:
 				franja.erase(it);
 			}
 
-			SPT.InsertEdge(selectedEdge->from, selectedEdge->conectionData, selectedEdge->weight);
+			SPT.InsertEdge(selectedEdge->getFrom(), selectedEdge->getConectionData(), selectedEdge->getWeight());
 			currentNode = nextNode;
 
 		}
