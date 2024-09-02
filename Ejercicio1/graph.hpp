@@ -3,17 +3,20 @@
 #include <vector>
 
 /*
-This structure contains all the information of the edge:
+This class contains all the information of the edge:
 the node from which it comes,
 the node to which it goes,
 the weight of the edge and a pointer to the next edge. 
 */
-struct edge{
+class edge{
+
+public:
 	int from;
 	int conectionData;
 	int weight;
 	edge* nextEdge;
 
+public:
 	edge(){};
 
 	edge(int from, int data){
@@ -28,15 +31,16 @@ struct edge{
 	};
 
 };
-typedef edge *pEdge;
+typedef edge* pEdge;
 
 /*
-This structure contains all the information of the node:
+This class contains all the information of the node:
 the ID of the node,
 the data of the node,
 a pointer to the first edge that comes out of the node,
 */
-struct node{
+class node{
+public:
 	int ID;
 	int nodeData;
 	edge* conection;
