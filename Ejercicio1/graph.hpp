@@ -99,96 +99,91 @@ public:
 	};
 	
 	void InsertEdge(int IDx, int IDy){
-		pNode graphHead;
-		pEdge newEdge;
-		graphHead = head;
-		
-		if(nodeNumber <= 1){
-			std::cout<<"graph is empty or only have 1 node"<<std::endl;
-			
+
+		if (IDx < 0 || IDy < 0) {
+			std::cout << "Invalid ID" << std::endl;
+		return;
+		}
+
+		if (IDx == IDy) {
+			std::cout << "Can't insert an edge between the same node" << std::endl;
 			return;
 		}
 
-		while(graphHead != nullptr){
-			
-			if(graphHead->ID == IDx || graphHead->ID == IDy){
-				
-				pEdge edgeHead = graphHead->conection;
-
-				while(edgeHead != nullptr){
-					if(edgeHead->conectionData == IDx ||
-						edgeHead->conectionData == IDy ){
-
-						std::cout<<"the edge already exists"<<std::endl;
-						return;
-					}
-					edgeHead = edgeHead->nextEdge;
-				}
-				
-
-				newEdge = new edge(graphHead->ID == IDx? IDx: IDy, graphHead->ID == IDx? IDy: IDx);
-
-				newEdge -> nextEdge = graphHead->conection;
-				graphHead->conection = newEdge;
-			}
-			graphHead = graphHead->nextNode;
+		if (nodeNumber <= 1) {
+			std::cout << "graph is empty or only have 1 Node" << std::endl;
+			return;
 		}
+
+		pNode graphHead;
+		pEdge edgeHead;
+		
+		pNode nodeX = SearchNodeByID(IDx);
+		pNode nodeY = SearchNodeByID(IDy);
+
+		if(nodeX == nullptr || nodeY == nullptr) {
+			std::cout << "One or both nodes don't exist" << std::endl;
+			return;
+		}
+
+		//cheking for X
+		edgeHead = nodeX->conection;
+		while (edgeHead != nullptr) {
+			if (edgeHead->conectionData == IDy) {
+				std::cout << "the Edge already exists" << std::endl;
+				return;
+			}
+			edgeHead = edgeHead->nextEdge;
+		};
+
+		//Inserting for X
+		edgeHead = new edge(IDx, IDy);
+		edgeHead->nextEdge = nodeX->conection;
+		nodeX->conection = edgeHead;
+
+		//cheking for Y
+		edgeHead = nodeY->conection;
+		while (edgeHead != nullptr) {
+			if (edgeHead->conectionData == IDx) {
+				std::cout << "the Edge already exists" << std::endl;
+				return;
+			}
+			edgeHead = edgeHead->nextEdge;
+		};
+
+		//Inserting for Y
+		edgeHead = new edge(IDy, IDx);
+		edgeHead->nextEdge = nodeY->conection;
+		nodeX->conection = edgeHead;
+		
 	};
 
 	void InsertEdge(int IDx, int IDy, int npeso){
-		pNode graphHead;
-		pEdge newEdge;
-		graphHead = head;
+		InsertEdge(IDx, IDy);
 		
-		if(nodeNumber <= 1){
-			std::cout<<"graph is empty or only have 1 node"<<std::endl;
-			return;
+		pEdge edgeHead;
+
+		pNode nodeX = SearchNodeByID(IDx);
+		pNode nodeY = SearchNodeByID(IDy);
+
+		edgeHead = nodeX->conection;
+		while(edgeHead != nullptr){
+			if(edgeHead->conectionData == IDy){
+				edgeHead->weight = npeso;
+				break;
+			}
+			edgeHead = edgeHead->nextEdge;
 		}
 
-		while(graphHead != nullptr){
-			
-			if(graphHead->ID == IDx || graphHead->ID == IDy){
-				
-				pEdge edgeHead = graphHead->conection;
-
-				while(edgeHead != nullptr){
-					if(edgeHead->conectionData == IDx ||
-						edgeHead->conectionData == IDy ){
-						
-						std::cout<<"the edge already exists"<<std::endl;
-						return;
-					}
-					edgeHead = edgeHead->nextEdge;
-				}
-				
-
-				newEdge = new edge(graphHead->ID == IDx? IDx: IDy, graphHead->ID == IDx? IDy: IDx, npeso);
-
-				newEdge -> nextEdge = graphHead->conection;
-				graphHead->conection = newEdge;
+		edgeHead = nodeY->conection;
+		while(edgeHead != nullptr){
+			if(edgeHead->conectionData == IDx){
+				edgeHead->weight = npeso;
+				break;
 			}
-			graphHead = graphHead->nextNode;
+			edgeHead = edgeHead->nextEdge;
 		}
 	};
-
-	void InsertDirigedEdge(int from, int to, int weight){
-		pNode graphHead;
-		pEdge newEdge;
-		graphHead = head;
-		
-		if(nodeNumber <= 1){
-			std::cout<<"graph is empty or only have 1 node"<<std::endl;
-			return;
-		}
-		while(graphHead != nullptr){
-			if(graphHead->ID == from){
-				newEdge = new edge(from, to, weight);
-				newEdge -> nextEdge = graphHead->conection;
-				graphHead->conection = newEdge;
-			}
-			graphHead = graphHead->nextNode;
-		}
-	}
 
 	pNode SearchNodeByID(int IDnode){
 		pNode graphHead;
@@ -305,7 +300,7 @@ public:
 				}
 
 				SPT.InsertEdge(selectedEdge->from, selectedEdge->conectionData, selectedEdge->weight);
-				currentNode =nextNode;
+				currentNode = nextNode;
 			}
 
 			SPT.PrintGraph();
