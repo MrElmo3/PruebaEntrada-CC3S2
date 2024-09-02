@@ -2,6 +2,12 @@
 #include <queue>
 #include <vector>
 
+/*
+This structure contains all the information of the edge:
+the node from which it comes,
+the node to which it goes,
+the weight of the edge and a pointer to the next edge. 
+*/
 struct edge{
 	int from;
 	int conectionData;
@@ -24,7 +30,12 @@ struct edge{
 };
 typedef edge *pEdge;
 
-
+/*
+This structure contains all the information of the node:
+the ID of the node,
+the data of the node,
+a pointer to the first edge that comes out of the node,
+*/
 struct node{
 	int ID;
 	int nodeData;
@@ -46,24 +57,38 @@ struct node{
 typedef node *pNode;
 
 
+/*
+This class uses the list implementation to create a graph.
+*/
 class graph{
 private:
 
+	//ID of the next node to be inserted
 	int nodeID = 0;
 
+	//pointer to the first node of the graph
 	pNode head;
 
+	//number of nodes in the graph
 	int nodeNumber;
+
+	//number of edges in the graph
 	int edgeNumer;
 
 public:
 
+	/*
+	Base Graph constructor
+	*/
 	graph(){
 		head=nullptr;
 		nodeNumber = 0;
 		edgeNumer = 0;
 	};
 	
+	/*
+	Graph destructor
+	*/
 	~graph(){
 		
 		pNode graphHead, nodeAuxiliar;
@@ -87,6 +112,9 @@ public:
 		}
 	};
 	
+	/*
+	This method inserts a node into the graph using the next ID info stored in the graph.
+	*/
 	void InsertNode(){
 		pNode newNode;
 		newNode = new node(nodeID);
@@ -98,6 +126,9 @@ public:
 		nodeNumber++;
 	};
 	
+	/*
+	This methos inserts a edge between two nodes in the graph.
+	*/
 	void InsertEdge(int IDx, int IDy){
 
 		if (IDx < 0 || IDy < 0) {
@@ -158,6 +189,9 @@ public:
 		
 	};
 
+	/*
+	This method inserts a edge between two nodes in the graph with a weight.
+	*/
 	void InsertEdge(int IDx, int IDy, int npeso){
 		InsertEdge(IDx, IDy);
 		
@@ -185,6 +219,9 @@ public:
 		}
 	};
 
+	/*
+	This method searches for a node in the graph by its ID.
+	*/
 	pNode SearchNodeByID(int IDnode){
 		pNode graphHead;
 		graphHead = head;
@@ -199,6 +236,9 @@ public:
 
 	}
 	
+	/*
+	This method prints a basic representation of the graph.
+	*/
 	void PrintGraph(){
 		pNode graphHead;
 		pEdge edgeHead;
@@ -223,7 +263,11 @@ public:
 		}			
 	};
 
-	graph Dijkstra(int startNode){
+	/*
+	This methos uses the Dijkstra algorithm to find the shortest path between two nodes.
+	It returns a Graph with the shortest path tree.
+	*/
+	graph Dijkstra(int startNode, int endNode){
 		std::vector<bool> visited(nodeNumber);
 		std::vector<int> nearPath(nodeNumber);
 
@@ -246,7 +290,7 @@ public:
 		//nodo de inicio
 		nearPath[currentNode] = 0;
 
-		while(currentNode != -1){
+		while(currentNode != endNode){
 
 			//agregar los edges de los nodos no visitados 
 			pEdge nearEdges= this->SearchNodeByID(currentNode)->conection;
@@ -270,41 +314,31 @@ public:
 
 			int minDistance = 2147483647;
 			int nextNode;
-			bool flag = true;
 			pEdge selectedEdge = nullptr;
 			for (int i = 0; i < this->nodeNumber; ++i){
 				if(!visited[i]){
-					flag = false;
 					if(nearPath[i] < minDistance){
 						nextNode = i;
 						minDistance = nearPath[i];
 					}
 				}
 			}
-
-			if(flag){
-				currentNode = -1;
-			}
-			else{
-				for(pEdge edge : franja){
-					if( nearPath[edge->from]+ edge->weight == nearPath[edge->conectionData] && nextNode == edge->conectionData){
-						selectedEdge = edge;
-						break;
-						
-					}
+			for(pEdge edge : franja){
+				if( nearPath[edge->from]+ edge->weight == nearPath[edge->conectionData] && nextNode == edge->conectionData){
+					selectedEdge = edge;
+					break;
+					
 				}
-
-				auto it = std::find(franja.begin(), franja.end(), selectedEdge);
-				if(it != franja.end()){
-					franja.erase(it);
-				}
-
-				SPT.InsertEdge(selectedEdge->from, selectedEdge->conectionData, selectedEdge->weight);
-				currentNode = nextNode;
 			}
 
-			SPT.PrintGraph();
-			std::cout<<"a";
+			auto it = std::find(franja.begin(), franja.end(), selectedEdge);
+			if(it != franja.end()){
+				franja.erase(it);
+			}
+
+			SPT.InsertEdge(selectedEdge->from, selectedEdge->conectionData, selectedEdge->weight);
+			currentNode = nextNode;
+
 		}
 		return SPT;
 	};
